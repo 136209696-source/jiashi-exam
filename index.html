@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>驾考科目一 · 2026新规练习工具（精选1600题）</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#f0f4f8;--surface:#fff;--pri:#2563eb;--pri-light:#dbeafe;--ok:#16a34a;--ok-light:#dcfce7;--err:#dc2626;--err-light:#fee2e2;--warn:#ea580c;--warn-light:#fff7ed;--text:#1e293b;--text2:#64748b;--border:#e2e8f0;--qbg:#f8fafc;--obg:#f1f5f9;--hover:#f1f5f9;--radius:12px;--shadow:0 1px 3px rgba(0,0,0,.08)}
+[data-theme="dark"]{--bg:#0f172a;--surface:#1e293b;--pri:#60a5fa;--pri-light:#1e3a5f;--ok:#4ade80;--ok-light:#14532d;--err:#f87171;--err-light:#450a0a;--warn:#fb923c;--warn-light:#431407;--text:#f1f5f9;--text2:#94a3b8;--border:#334155;--qbg:#1e293b;--obg:#334155;--hover:#1e293b;--shadow:0 1px 3px rgba(0,0,0,.4)}
+[data-theme="dark"] header{background:linear-gradient(135deg,#0f172a,#1e3a5f)}
+[data-theme="dark"] .btn-outline{background:var(--surface)}
+[data-theme="dark"] .toolbar button:hover{background:var(--hover)}
+[data-theme="dark"] .nav-dot{background:var(--surface)}
+[data-theme="dark"] .result-panel .tip{background:var(--surface)}
+[data-theme="dark"] .modal{background:var(--surface)}
+[data-theme="dark"] .option-letter{background:var(--obg)}
+[data-theme="dark"] .option.selected .option-letter,
+[data-theme="dark"] .option.correct .option-letter,
+[data-theme="dark"] .option.show-correct .option-letter{background:var(--pri);color:#fff}
+[data-theme="dark"] .option.wrong .option-letter{background:var(--err);color:#fff}
+[data-theme="dark"] .progress-bar{background:var(--border)}
+[data-theme="dark"] .type-badge.judgment{background:#422006;color:#fbbf24}
+[data-theme="dark"] .type-badge.choice{background:#2e1065;color:#c4b5fd}
+[data-theme="dark"] .btn-outline:hover{background:var(--hover)}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh}
+header{background:linear-gradient(135deg,#1e3a5f,#2563eb);color:#fff;padding:14px 20px;position:sticky;top:0;z-index:100;box-shadow:0 4px 12px rgba(0,0,0,.15)}
+header .inner{max-width:1000px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
+header h1{font-size:1.2rem;font-weight:700}
+header .stats{display:flex;gap:14px;font-size:.8rem;flex-wrap:wrap}
+header .stats span{background:rgba(255,255,255,.18);padding:4px 12px;border-radius:20px;white-space:nowrap}
+main{max-width:1000px;margin:0 auto;padding:16px 12px 40px}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;align-items:center}
+.toolbar button,.toolbar select{padding:9px 15px;border-radius:8px;border:1px solid var(--border);background:var(--surface);cursor:pointer;font-size:.85rem;transition:all .15s;font-family:inherit}
+.toolbar button:hover{background:var(--hover)}
+.toolbar button.active{background:var(--pri);color:#fff;border-color:var(--pri)}
+.toolbar select{min-width:150px}
+.mode-switch{display:flex;gap:0}
+.mode-switch button{border-radius:0}
+.mode-switch button:first-child{border-radius:8px 0 0 8px}
+.mode-switch button:last-child{border-radius:0 8px 8px 0}
+.card{background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);padding:24px 20px;margin-bottom:16px;border:1px solid var(--border)}
+.card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px}
+.question-num{font-weight:700;font-size:1rem}
+.cat-badge{font-size:.75rem;padding:3px 10px;border-radius:20px;background:var(--pri-light);color:var(--pri);font-weight:600}
+.type-badge{font-size:.7rem;padding:2px 8px;border-radius:10px}
+.type-badge.judgment{background:#fef3c7;color:#b45309}
+.type-badge.choice{background:#ede9fe;color:#6d28d9}
+.question-text{font-size:1.05rem;line-height:1.8;margin-bottom:18px;padding:14px;background:var(--qbg);border-radius:8px;border-left:4px solid var(--pri)}
+.options{display:flex;flex-direction:column;gap:8px}
+.option{display:flex;align-items:center;gap:10px;padding:12px 15px;border:2px solid var(--border);border-radius:10px;cursor:pointer;transition:all .15s;user-select:none}
+.option:hover{border-color:var(--pri);background:var(--pri-light)}
+.option.selected{border-color:var(--pri);background:var(--pri-light)}
+.option.correct{border-color:var(--ok);background:var(--ok-light)}
+.option.wrong{border-color:var(--err);background:var(--err-light)}
+.option.show-correct{border-color:var(--ok);background:var(--ok-light)}
+.option.disabled{pointer-events:none;opacity:.85}
+.option-letter{width:30px;height:30px;border-radius:50%;background:var(--obg);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.8rem;flex-shrink:0}
+.option.selected .option-letter,.option.correct .option-letter,.option.show-correct .option-letter{background:var(--pri);color:#fff}
+.option.wrong .option-letter{background:var(--err);color:#fff}
+.option-text{flex:1}
+.actions{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap}
+.btn{padding:11px 24px;border-radius:8px;border:none;cursor:pointer;font-size:.9rem;font-weight:600;transition:all .15s;font-family:inherit}
+.btn-primary{background:var(--pri);color:#fff}
+.btn-primary:hover{background:#1d4ed8}
+.btn-success{background:var(--ok);color:#fff}
+.btn-outline{background:var(--surface);border:2px solid var(--border);color:var(--text)}
+.btn-outline:hover{background:var(--hover)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn-sm{padding:7px 14px;font-size:.78rem}
+.result-panel{margin-top:18px;padding:18px;border-radius:10px;display:none}
+.result-panel.show{display:block}
+.result-panel.correct{background:var(--ok-light);border:1px solid var(--ok)}
+.result-panel.wrong{background:var(--err-light);border:1px solid var(--err)}
+.result-panel h4{font-size:.95rem;margin-bottom:6px}
+.result-panel .exp{font-size:.9rem;line-height:1.7;margin-bottom:8px}
+.result-panel .tip{background:var(--surface);padding:10px 14px;border-radius:8px;border-left:3px solid var(--warn);font-size:.85rem;line-height:1.7}
+.result-panel .tip strong{color:var(--warn)}
+.progress-wrap{margin-bottom:16px}
+.progress-bar{height:7px;background:var(--border);border-radius:4px;overflow:hidden}
+.progress-fill{height:100%;background:var(--pri);border-radius:4px;transition:width .3s}
+.progress-text{font-size:.75rem;color:var(--text2);margin-top:5px;text-align:right}
+.navigator{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:16px;max-height:200px;overflow-y:auto}
+.nav-dot{width:28px;height:28px;border-radius:5px;border:1px solid var(--border);background:var(--surface);cursor:pointer;font-size:.7rem;display:flex;align-items:center;justify-content:center;transition:all .12s;flex-shrink:0}
+.nav-dot:hover{border-color:var(--pri)}
+.nav-dot.current{border-color:var(--pri);background:var(--pri);color:#fff}
+.nav-dot.correct-dot{background:var(--ok-light);border-color:var(--ok)}
+.nav-dot.wrong-dot{background:var(--err-light);border-color:var(--err)}
+.nav-dot.unanswered{opacity:.5}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;display:none;align-items:center;justify-content:center}
+.modal-overlay.show{display:flex}
+.modal{background:var(--surface);border-radius:16px;padding:28px;max-width:480px;width:90%;text-align:center;box-shadow:0 10px 25px rgba(0,0,0,.1)}
+.modal h2{font-size:1.4rem;margin-bottom:10px}
+.modal .score{font-size:2.8rem;font-weight:800;margin:14px 0}
+.modal .score.pass{color:var(--ok)}
+.modal .score.fail{color:var(--err)}
+.modal .stat-row{display:flex;justify-content:space-around;margin:18px 0}
+.modal .stat-item{text-align:center}
+.modal .stat-item .val{font-size:1.4rem;font-weight:700}
+.modal .stat-item .lbl{font-size:.75rem;color:var(--text2)}
+.timer{font-family:"SF Mono","Fira Code",monospace;font-size:1rem;font-weight:700}
+.timer.warning{color:#fbbf24}
+.timer.danger{color:#f87171;animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+.text-center{text-align:center}
+.hidden{display:none!important}
+@media(max-width:640px){header{padding:10px 12px}header h1{font-size:1rem}.card{padding:18px 14px}.question-text{font-size:.95rem}.option{padding:10px 12px}}
+</style>
+</head>
+<body>
+<header>
+<div class="inner">
+<h1>🚗 驾考科目一 · 2026新规练习工具</h1>
+<div class="stats">
+<span id="stat-mode">📝 练习模式</span>
+<span id="stat-progress">0/0</span>
+<span id="stat-score">✅ 0 ❌ 0</span>
+<span class="timer hidden" id="timer">⏱ 45:00</span>
+<button id="btn-theme" onclick="toggleTheme()" style="background:rgba(255,255,255,.18);border:none;color:#fff;padding:4px 10px;border-radius:20px;cursor:pointer;font-size:.8rem;font-family:inherit" title="切换夜间/白天模式">🌙</button>
+</div>
+</div>
+</header>
+<main>
+<div class="toolbar">
+<div class="mode-switch">
+<button id="btn-practice" class="active" onclick="switchMode('practice')">📝 练习</button>
+<button id="btn-exam" onclick="switchMode('exam')">🏆 模拟考试</button>
+</div>
+<select id="cat-filter" onchange="filterCategory()">
+<option value="all">📂 全部分类（1600题）</option>
+<option value="laws">📜 交通法律法规</option>
+<option value="signals">🚦 交通信号</option>
+<option value="safe">🛡 安全行车常识</option>
+<option value="operation">⚙ 驾驶操作知识</option>
+<option value="points">📊 记分管理（2026新规）</option>
+<option value="accident">🚑 事故处理</option>
+<option value="highway">🛣 高速公路</option>
+<option value="weather">🌧 恶劣天气/复杂道路</option>
+<option value="emergency">🆘 紧急情况处置</option>
+<option value="ev">🔋 新能源汽车（2026新增）</option>
+<option value="smart">🤖 智能驾驶辅助（2026新增）</option>
+<option value="newsigns">🚧 新型交通标志（2026新增）</option>
+</select>
+<button onclick="randomQuestion()">🎲 随机一题</button>
+<button id="btn-wrong" onclick="reviewWrong()">📋 错题回顾 (<span id="wrong-count">0</span>)</button>
+<button class="btn-outline btn-sm" onclick="resetProgress()">🔄 重置</button>
+</div>
+<div class="progress-wrap">
+<div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+<div class="progress-text" id="progress-text"></div>
+</div>
+<div class="navigator hidden" id="navigator"></div>
+<div class="card" id="question-card">
+<div class="card-header">
+<span class="question-num" id="question-num"></span>
+<span class="cat-badge" id="cat-badge"></span>
+<span class="type-badge" id="type-badge"></span>
+</div>
+<div class="question-text" id="question-text"></div>
+<div class="options" id="options"></div>
+<div class="actions">
+<button class="btn btn-primary" id="btn-submit" onclick="submitAnswer()">✅ 提交答案</button>
+<button class="btn btn-outline" id="btn-prev" onclick="prevQuestion()">◀ 上一题</button>
+<button class="btn btn-outline" id="btn-next" onclick="nextQ()">下一题 ▶</button>
+<button class="btn btn-outline btn-sm" id="btn-mark" onclick="toggleMark()">🔖 标记</button>
+</div>
+<div class="result-panel" id="result-panel">
+<h4 id="result-title"></h4>
+<div class="exp" id="result-exp"></div>
+<div class="tip" id="result-tip"></div>
+</div>
+</div>
+</main>
+<div class="modal-overlay" id="modal-overlay">
+<div class="modal">
+<h2 id="modal-title"></h2>
+<div class="score" id="modal-score"></div>
+<div class="stat-row">
+<div class="stat-item"><div class="val" id="modal-correct">0</div><div class="lbl">✅ 正确</div></div>
+<div class="stat-item"><div class="val" id="modal-wrong">0</div><div class="lbl">❌ 错误</div></div>
+<div class="stat-item"><div class="val" id="modal-time">0:00</div><div class="lbl">⏱ 用时</div></div>
+</div>
+<div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+<button class="btn btn-primary" onclick="reviewExamWrong()">📋 查看错题</button>
+<button class="btn btn-success" onclick="restartExam()">🔄 重新考试</button>
+<button class="btn btn-outline" onclick="closeModal()">✕ 关闭</button>
+</div>
+</div>
+</div>
+<script src="questions_p1.js"></script>
+<script src="questions_p2.js"></script>
+<script src="questions_p3.js"></script>
+<script src="questions_p4.js"></script>
+<script src="questions_p5.js"></script>
+<script>
+// APP STATE
+const S={mode:'practice',questions:[],currentIndex:0,answers:{},results:{},marked:new Set(),examTimer:null,examTimeLeft:2700,wrongSet:new Set()};
+const CAT_NAMES={laws:'📜 交通法律法规',signals:'🚦 交通信号',safe:'🛡 安全行车常识',operation:'⚙ 驾驶操作知识',points:'📊 记分管理（2026新规）',accident:'🚑 事故处理',highway:'🛣 高速公路',weather:'🌧 恶劣天气/复杂道路',emergency:'🆘 紧急情况处置',ev:'🔋 新能源汽车',smart:'🤖 智能驾驶辅助',newsigns:'🚧 新型交通标志'};
+
+function init(){loadStorage();applyTheme();buildPool();renderAll();}
+function applyTheme(){const t=localStorage.getItem('jiashi2026_theme')||'light';document.documentElement.setAttribute('data-theme',t);document.getElementById('btn-theme').textContent=t==='dark'?'☀️':'🌙';}
+function toggleTheme(){const cur=document.documentElement.getAttribute('data-theme')||'light';const next=cur==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',next);document.getElementById('btn-theme').textContent=next==='dark'?'☀️':'🌙';localStorage.setItem('jiashi2026_theme',next);}
+function buildPool(){const f=document.getElementById('cat-filter').value;S.questions=f==='all'?[...Q]:Q.filter(q=>q.cat===f);if(S.currentIndex>=S.questions.length)S.currentIndex=0;}
+function renderAll(){updateStats();renderNav();renderQ();updateProgress();document.getElementById('wrong-count').textContent=S.wrongSet.size;}
+function updateStats(){const t=S.questions.length;document.getElementById('stat-mode').textContent=S.mode==='practice'?'📝 练习模式':'🏆 模拟考试';document.getElementById('stat-progress').textContent=t>0?`${S.currentIndex+1}/${t}`:'0/0';const c=Object.values(S.results).filter(Boolean).length;const w=Object.values(S.results).filter(v=>!v).length;document.getElementById('stat-score').textContent=`✅ ${c} ❌ ${w}`;}
+function updateProgress(){const t=S.questions.length;const a=Object.keys(S.answers).length;const p=t>0?Math.round(a/t*100):0;document.getElementById('progress-fill').style.width=p+'%';document.getElementById('progress-text').textContent=`已完成 ${a}/${t} 题 (${p}%)`;}
+function renderNav(){const nav=document.getElementById('navigator');if(S.mode!=='exam'){nav.classList.add('hidden');return;}nav.classList.remove('hidden');let h='';S.questions.forEach((q,i)=>{let c='nav-dot';if(i===S.currentIndex)c+=' current';if(S.results[q.id]===true)c+=' correct-dot';if(S.results[q.id]===false)c+=' wrong-dot';if(S.answers[q.id]===undefined)c+=' unanswered';if(S.marked.has(q.id))c+=' marked-dot';h+=`<div class="${c}" onclick="goToQ(${i})">${i+1}</div>`;});nav.innerHTML=h;}
+function renderQ(){if(S.questions.length===0){document.getElementById('question-card').innerHTML='<div class="text-center" style="padding:40px"><h3>暂无题目</h3><p>请选择其他分类</p></div>';return;}const q=S.questions[S.currentIndex];document.getElementById('question-num').textContent=`第 ${S.currentIndex+1} 题（共 ${S.questions.length} 题）${S.marked.has(q.id)?' 🔖':''}`;document.getElementById('cat-badge').textContent=CAT_NAMES[q.cat]||q.cat;document.getElementById('type-badge').textContent=q.type==='judgment'?'判断题':'单选题';document.getElementById('type-badge').className='type-badge '+q.type;document.getElementById('question-text').textContent=q.q;const ua=S.answers[q.id];const hr=S.results.hasOwnProperty(q.id);let oh='';q.opts.forEach((o,i)=>{let c='option';if(hr)c+=' disabled';if(ua===i&&!hr)c+=' selected';if(hr){if(i===q.ans)c+=' show-correct';if(i===ua&&ua!==q.ans)c+=' wrong';if(i===ua&&ua===q.ans)c+=' correct';}oh+=`<div class="${c}" onclick="selectOpt(${i})" id="opt-${i}"><div class="option-letter">${'ABCD'[i]}</div><div class="option-text">${o}</div></div>`;});document.getElementById('options').innerHTML=oh;const panel=document.getElementById('result-panel');if(hr){const ok=S.results[q.id];panel.className='result-panel show '+(ok?'correct':'wrong');document.getElementById('result-title').textContent=ok?'✅ 回答正确！':'❌ 回答错误';document.getElementById('result-exp').textContent='📖 '+q.exp;document.getElementById('result-tip').innerHTML='<strong>💡 记忆口诀：</strong>'+q.tip;}else{panel.className='result-panel';}document.getElementById('btn-submit').style.display=hr?'none':'inline-block';document.getElementById('btn-prev').disabled=S.currentIndex===0;document.getElementById('btn-next').disabled=S.currentIndex>=S.questions.length-1;}
+function selectOpt(i){const q=S.questions[S.currentIndex];if(S.results.hasOwnProperty(q.id))return;S.answers[q.id]=i;renderQ();}
+function submitAnswer(){const q=S.questions[S.currentIndex];if(S.answers[q.id]===undefined){alert('请先选择一个答案！');return;}const ok=S.answers[q.id]===q.ans;S.results[q.id]=ok;if(!ok)S.wrongSet.add(q.id);saveStorage();renderAll();}
+function nextQ(){if(S.currentIndex<S.questions.length-1){S.currentIndex++;renderAll();}else if(S.mode==='exam'){finishExam();}}
+function prevQuestion(){if(S.currentIndex>0){S.currentIndex--;renderAll();}}
+function goToQ(i){S.currentIndex=i;renderAll();}
+function randomQuestion(){if(S.questions.length===0)return;S.currentIndex=Math.floor(Math.random()*S.questions.length);renderAll();}
+function toggleMark(){const q=S.questions[S.currentIndex];if(!q)return;S.marked.has(q.id)?S.marked.delete(q.id):S.marked.add(q.id);saveStorage();renderQ();}
+function filterCategory(){buildPool();S.currentIndex=0;renderAll();}
+function switchMode(mode){if(mode===S.mode)return;if(mode==='exam'&&!confirm('切换到模拟考试模式将重新随机出题并开始计时（45分钟/100题/90分及格），确定继续吗？'))return;S.mode=mode;S.currentIndex=0;S.answers={};S.results={};S.marked=new Set();S.examTimeLeft=2700;if(S.examTimer)clearInterval(S.examTimer);document.getElementById('btn-practice').classList.toggle('active',mode==='practice');document.getElementById('btn-exam').classList.toggle('active',mode==='exam');document.getElementById('timer').classList.toggle('hidden',mode!=='exam');if(mode==='exam'){document.getElementById('cat-filter').value='all';buildPool();S.questions=weightedSample([...S.questions],100);startTimer();}else{buildPool();}renderAll();}
+function startTimer(){S.examTimeLeft=2700;updateTimer();document.getElementById('timer').classList.remove('hidden');if(S.examTimer)clearInterval(S.examTimer);S.examTimer=setInterval(()=>{S.examTimeLeft--;updateTimer();if(S.examTimeLeft<=0)finishExam();},1000);}
+function updateTimer(){const m=Math.floor(S.examTimeLeft/60);const s=S.examTimeLeft%60;const el=document.getElementById('timer');el.textContent=`⏱ ${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;el.className='timer';if(S.examTimeLeft<300)el.classList.add('danger');else if(S.examTimeLeft<600)el.classList.add('warning');}
+function finishExam(){if(S.examTimer)clearInterval(S.examTimer);const total=S.questions.length;const correct=Object.values(S.results).filter(Boolean).length;const wrong=total-correct;const passed=correct>=90;S.questions.forEach(q=>{if(!S.results.hasOwnProperty(q.id)){S.results[q.id]=false;S.wrongSet.add(q.id);}});const elapsed=2700-S.examTimeLeft;const em=Math.floor(elapsed/60);const es=elapsed%60;document.getElementById('modal-title').textContent=passed?'🎉 恭喜通过！':'😞 未通过，继续加油！';document.getElementById('modal-score').textContent=correct+' 分';document.getElementById('modal-score').className='score '+(passed?'pass':'fail');document.getElementById('modal-correct').textContent=correct;document.getElementById('modal-wrong').textContent=wrong;document.getElementById('modal-time').textContent=`${em}:${String(es).padStart(2,'0')}`;document.getElementById('modal-overlay').classList.add('show');saveStorage();S.mode='practice';document.getElementById('btn-practice').classList.add('active');document.getElementById('btn-exam').classList.remove('active');document.getElementById('timer').classList.add('hidden');}
+function closeModal(){document.getElementById('modal-overlay').classList.remove('show');buildPool();S.currentIndex=0;renderAll();}
+function restartExam(){document.getElementById('modal-overlay').classList.remove('show');switchMode('exam');}
+function reviewExamWrong(){document.getElementById('modal-overlay').classList.remove('show');reviewWrong();}
+function reviewWrong(){const ids=[...S.wrongSet];if(ids.length===0){alert('🎉 没有错题！继续保持！');return;}S.mode='practice';S.questions=Q.filter(q=>ids.includes(q.id));S.currentIndex=0;document.getElementById('btn-practice').classList.add('active');document.getElementById('btn-exam').classList.remove('active');document.getElementById('timer').classList.add('hidden');document.getElementById('cat-filter').value='all';renderAll();}
+function saveStorage(){try{localStorage.setItem('jiashi2026',JSON.stringify({wrongSet:[...S.wrongSet],results:S.results,marked:[...S.marked]}));}catch(e){}}
+function loadStorage(){try{const d=JSON.parse(localStorage.getItem('jiashi2026'));if(d){S.wrongSet=new Set(d.wrongSet||[]);S.results=d.results||{};S.marked=new Set(d.marked||[]);}}catch(e){}}
+function resetProgress(){if(!confirm('确定重置所有练习记录吗？（包括错题和标记）'))return;S.answers={};S.results={};S.wrongSet=new Set();S.marked=new Set();S.currentIndex=0;S.examTimeLeft=2700;if(S.examTimer)clearInterval(S.examTimer);saveStorage();buildPool();renderAll();}
+// 2025-2026年科目一真实考试高频考点关键词
+const HOT_KW=['记分','扣分','12分','9分','6分','3分','1分','罚款','吊销','拘留','醉酒','饮酒','逃逸','危险驾驶','限速','最高时速','最低时速','安全距离','让行','先行','超车','变道','掉头','倒车','禁止','警告','指示','标志','标线','信号灯','交警手势','高速','快速路','隧道','交叉路口','人行横道','停车','安全带','头盔','检验','年检','报废','新能源','充电','电池','智能驾驶','辅助驾驶','自适应巡航','车道保持','自动紧急制动','事故','急救','报警','驾驶证','行驶证','号牌','改装','实习','疲劳驾驶','超载','超员','超速','夜间','雨天','雾天','冰雪','恶劣天气','紧急','制动','避险','爆胎','侧滑','校车','公交','特种车辆','牵引','挂车','危险品','追逐竞驶','准驾','换证','审验','实习期','路权','匝道','应急车道','中央分隔','避险车道','减速让行','停车让行','交替通行','潮汐车道','可变车道','待转区'];
+function hotScore(q){let s=0;for(const k of HOT_KW){if(q.q.includes(k))s++;}return Math.min(s,8);}
+function weightedSample(pool,n){const items=pool.map(q=>({q,r:Math.random()*(1+hotScore(q)*4)}));items.sort((a,b)=>b.r-a.r);return items.slice(0,n).map(it=>it.q);}
+
+document.addEventListener('keydown',e=>{if(e.target.tagName==='SELECT')return;const q=S.questions[S.currentIndex];const hr=q&&S.results.hasOwnProperty(q.id);if(!hr){const k=['a','b','c','d','1','2','3','4'].indexOf(e.key.toLowerCase());if(k>=0&&k<(q?.opts.length||0))selectOpt(k%4);if(e.key==='Enter'){e.preventDefault();submitAnswer();}}if(e.key==='ArrowRight'||e.key==='n'){e.preventDefault();nextQ();}if(e.key==='ArrowLeft'||e.key==='p'){e.preventDefault();prevQuestion();}if(e.key==='m'){e.preventDefault();toggleMark();}});
+init();
+</script>
+</body>
+</html>
